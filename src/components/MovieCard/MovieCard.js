@@ -1,8 +1,8 @@
 import React from 'react';
-// import format from 'date-fns/format';
+import format from 'date-fns/format';
 
 import './MovieCard.css';
-// import poster from '../../img/DefaultPoster.jpg';
+import shortenDescription from '../../services/shortenDescription';
 
 export default class MovieCard extends React.Component {
   render() {
@@ -15,12 +15,14 @@ export default class MovieCard extends React.Component {
         </div>
         <div className="movie-data">
           <h2 className="movie-data__title">{itemProps.title}</h2>
-          <span className="movie-data__realese-date">{itemProps.releaseDate}</span>
+          <span className="movie-data__realese-date">
+            {format(new Date(Date.parse(itemProps.releaseDate)), 'MMMM d, yyyy')}
+          </span>
           <ul className="movie-data__tags">
             <li className="movie-data__tag">Action</li>
             <li className="movie-data__tag">Drama</li>
           </ul>
-          <p className="movie-data__description">{itemProps.description}</p>
+          <p className="movie-data__description">{shortenDescription(itemProps.description)}</p>
         </div>
       </div>
     );

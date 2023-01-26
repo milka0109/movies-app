@@ -33,7 +33,7 @@ export default class App extends React.Component {
                 title: item.original_title,
                 releaseDate: item.release_date,
                 tags: 'tags',
-                description: 'Some description',
+                description: item.overview,
                 filmRating: item.vote_average,
                 poster: `${this.urlPosters}${item.poster_path}`,
               },

@@ -15,26 +15,3 @@ export default class ApiService {
     return body.results;
   }
 }
-
-// export default class ApiService {
-//   rootPath = 'https://api.themoviedb.org/';
-
-//   apiKey = '8936db45338f26fbdfd93025a7eada3c';
-
-//   async getResources(fragment) {
-//     const apiBase = `${this.rootPath}3/search/movie?api_key=${this.apiKey}`;
-//     const response = await fetch(`${apiBase}${fragment}`);
-
-//     if (!response.ok) {
-//       throw new Error(`Could not fetch ${this.rootPath}, received ${response.status}`);
-//     }
-
-//     const body = await response.json();
-
-//     if (body.results.length === 0) {
-//       throw new Error();
-//     }
-//     console.log(body.results);
-//     return body.results;
-//   }
-// }
