@@ -73,4 +73,12 @@ a:visited {
 	margin-right: auto;
 	max-width: 1010px;
 	background-color: #fff;
+	
+}
+
+.alert-error {
+    max-width: 300px;
+    position: absolute;
+    left: 50%;
+	top: 20px;
 }

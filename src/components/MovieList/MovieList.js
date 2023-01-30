@@ -3,12 +3,12 @@ import './MovieList.css';
 
 import MovieCard from '../MovieCard';
 
-function MovieList({ movieData }) {
+function MovieList({ movieData, loading }) {
   const elements = movieData.map((item) => {
     const { id, ...itemProps } = item;
     return (
       <li key={id} className="movie-card">
-        <MovieCard itemProps={itemProps} />
+        <MovieCard itemProps={itemProps} loading={loading} />
       </li>
     );
   });

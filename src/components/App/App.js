@@ -1,4 +1,6 @@
 import React from 'react';
+import { Spin, Alert } from 'antd';
+import { Online, Offline } from 'react-detect-offline';
 
 import ApiService from '../../services/ApiService';
 import './App.css';
@@ -13,6 +15,8 @@ export default class App extends React.Component {
     super();
     this.state = {
       movieData: [],
+      error: false,
+      errorMessage: null,
     };
   }
 
@@ -20,37 +24,63 @@ export default class App extends React.Component {
     this.createMovieList();
   }
 
-  createMovieList() {
-    this.apiService.getItems().then((list) => {
-      list.forEach((item) => {
-        this.setState((state) => {
-          const { movieData } = state;
-          return {
-            movieData: [
-              ...movieData,
-              {
-                id: item.id,
-                title: item.original_title,
-                releaseDate: item.release_date,
-                tags: 'tags',
-                description: item.overview,
-                filmRating: item.vote_average,
-                poster: `${this.urlPosters}${item.poster_path}`,
-              },
-            ],
-            loading: false,
-          };
-        });
-      });
+  onError(err) {
+    console.error('onError:', err);
+    this.setState({
+      loading: false,
+      error: true,
+      errorMessage: err.message,
     });
   }
 
+  createMovieList() {
+    this.apiService
+      .getItems()
+      .then((list) => {
+        list.forEach((item) => {
+          this.setState((state) => {
+            const { movieData } = state;
+            return {
+              movieData: [
+                ...movieData,
+                {
+                  id: item.id,
+                  title: item.original_title,
+                  releaseDate: item.release_date,
+                  tags: 'tags',
+                  description: item.overview,
+                  filmRating: item.vote_average,
+                  poster: `${this.urlPosters}${item.poster_path}`,
+                },
+              ],
+              loading: false,
+            };
+          });
+        });
+      })
+      .catch(this.onError);
+  }
+
   render() {
-    const { movieData } = this.state;
-    console.log(movieData);
+    const { movieData, loading, error } = this.state;
+    const loader = loading ? <Spin tip="Loading" size="large" className="loading" /> : null;
+    const alertError = error ? (
+      <Alert
+        message="Error"
+        description={this.state.errorMessage}
+        type="error"
+        showIcon="true"
+        className="alert-error"
+      />
+    ) : null;
     return (
       <section className="movies-app">
-        <MovieList movieData={movieData} />
+        <Offline>You're currently offline. Please check your connection.</Offline>
+        <Online>
+          {loader}
+          {alertError}
+          <MovieList movieData={movieData} loading={loading} />
+        </Online>
       </section>
     );
   }

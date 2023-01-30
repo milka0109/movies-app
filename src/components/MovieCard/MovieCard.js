@@ -1,4 +1,5 @@
 import React from 'react';
+import { Spin } from 'antd';
 import format from 'date-fns/format';
 
 import './MovieCard.css';
@@ -6,10 +7,12 @@ import shortenDescription from '../../services/shortenDescription';
 
 export default class MovieCard extends React.Component {
   render() {
-    const { itemProps } = this.props;
+    const { itemProps, loading } = this.props;
+    const loader = loading ? <Spin tip="Loading" size="large" className="loading" /> : null;
 
     return (
       <div className="movie-card">
+        {loader}
         <div className="movie-poster">
           <img src={itemProps.poster} alt="Movie Poster" className="movie-poster__img" />
         </div>

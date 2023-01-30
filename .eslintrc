@@ -37,8 +37,11 @@
 	  "react/react-in-jsx-scope": "off",
 	  "react/prop-types": 0,
 	  "react/static-property-placement": "off",
+	  "react/sort-comp": "off",
 	  "import/no-unresolved": [2, { "caseSensitive": false }],
+	  "react/no-unescaped-entities": "off",
 	  "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
+	  "react/destructuring-assignment": "off",
 	  "import/order": [
 		 2,
 		 {

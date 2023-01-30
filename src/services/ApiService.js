@@ -8,7 +8,6 @@ export default class ApiService {
   async getItems() {
     const res = await fetch(`${this.apiBase}?api_key=${this.apiKey}&query=${this.query}`);
     if (!res.ok) {
-      console.log('Server status: ', res.status);
       return new Error('Server is unavailable');
     }
     const body = await res.json();
