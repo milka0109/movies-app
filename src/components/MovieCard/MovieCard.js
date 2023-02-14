@@ -19,7 +19,7 @@ export default class MovieCard extends React.Component {
         <div className="movie-data">
           <h2 className="movie-data__title">{itemProps.title}</h2>
           <span className="movie-data__realese-date">
-            {format(new Date(Date.parse(itemProps.releaseDate)), 'MMMM d, yyyy')}
+            {itemProps.releaseDate ? format(new Date(Date.parse(itemProps.releaseDate)), 'MMMM d, y') : null}
           </span>
           <ul className="movie-data__tags">
             <li className="movie-data__tag">Action</li>

@@ -3,14 +3,30 @@ export default class ApiService {
 
   apiKey = '439a7710468ec69dc87797e7847da69b';
 
-  query = 'return';
-
-  async getItems() {
-    const res = await fetch(`${this.apiBase}?api_key=${this.apiKey}&query=${this.query}`);
-    if (!res.ok) {
-      return new Error('Server is unavailable');
+  async getItems(query, page) {
+    if (query === '') {
+      return Error('Поле для ввода пустое');
     }
-    const body = await res.json();
-    return body.results;
+    try {
+      const res = await fetch(`${this.apiBase}?api_key=${this.apiKey}&query=${query}&page=${page}`);
+      if (!res.ok) {
+        return new Error('Server is unavailable');
+      }
+      return await res.json();
+    } catch (err) {
+      throw Error(err);
+    }
+  }
+
+  async newGuestSession() {
+    try {
+      const res = await fetch(`${this.apiBase}authentication/guest_session/new?api_key=${this.key}`);
+      if (!res.ok) {
+        return new Error('Server is unavailable');
+      }
+      return await res.json();
+    } catch (err) {
+      throw Error(err);
+    }
   }
 }

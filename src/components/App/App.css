@@ -82,3 +82,8 @@ a:visited {
     left: 50%;
 	top: 20px;
 }
+
+.input {
+    max-width: 938px;
+    margin: 0 auto 0 auto;
+}

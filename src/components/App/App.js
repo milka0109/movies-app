@@ -1,10 +1,13 @@
 import React from 'react';
-import { Spin, Alert } from 'antd';
+import { Spin, Pagination, Tabs } from 'antd';
 import { Online, Offline } from 'react-detect-offline';
+import { debounce } from 'lodash';
 
 import ApiService from '../../services/ApiService';
 import './App.css';
 import MovieList from '../MovieList';
+import SearchBar from '../SearchBar';
+import AlertError from '../AlertError/AlertError';
 
 export default class App extends React.Component {
   urlPosters = 'https://image.tmdb.org/t/p/original/';
@@ -17,69 +20,133 @@ export default class App extends React.Component {
       movieData: [],
       error: false,
       errorMessage: null,
+      sessionId: null,
+      currentPage: 1,
+      totalMovies: null,
     };
   }
 
+  debouncedSearch = debounce((query, page) => {
+    this.createMovieList(query, page);
+  }, 1000);
+
   componentDidMount() {
-    this.createMovieList();
+    this.apiService
+      .newGuestSession()
+      .then((object) => {
+        this.setState({ sessionId: object.guest_session_id });
+      })
+      .catch((error) => this.onError(error));
+    const { query, currentPage } = this.state;
+    this.debouncedSearch(query, currentPage);
   }
 
-  onError(err) {
-    console.error('onError:', err);
+  componentDidUpdate(prevProps, prevState) {
+    const { query, currentPage } = this.state;
+    if (prevState.query !== query || prevState.currentPage !== currentPage) {
+      this.clearList();
+      this.debouncedSearch(query, currentPage);
+    }
+  }
+
+  clearList = () => {
+    this.setState({ movieData: [] });
+  };
+
+  onLabelChange = (evt) => {
+    const { value } = evt.target;
+    this.setState({
+      query: value,
+      loading: true,
+      error: false,
+    });
+  };
+
+  onError(error) {
     this.setState({
       loading: false,
       error: true,
-      errorMessage: err.message,
+      errorMessage: error.message,
     });
   }
 
-  createMovieList() {
+  onPagination = (page) => {
+    this.setState({
+      currentPage: page,
+      loading: true,
+    });
+  };
+
+  createMovieList(query, page) {
     this.apiService
-      .getItems()
+      .getItems(query, page)
       .then((list) => {
-        list.forEach((item) => {
-          this.setState((state) => {
-            const { movieData } = state;
-            return {
-              movieData: [
-                ...movieData,
-                {
-                  id: item.id,
-                  title: item.original_title,
-                  releaseDate: item.release_date,
-                  tags: 'tags',
-                  description: item.overview,
-                  filmRating: item.vote_average,
-                  poster: `${this.urlPosters}${item.poster_path}`,
-                },
-              ],
-              loading: false,
-            };
-          });
+        this.setState({
+          totalMovies: list.total_results,
+        });
+        list.results.forEach((item) => {
+          this.setState(({ movieData }) => ({
+            movieData: [
+              ...movieData,
+              {
+                id: item.id,
+                title: item.original_title,
+                releaseDate: item.release_date,
+                tags: 'tags',
+                description: item.overview,
+                filmRating: item.vote_average,
+                poster: `${this.urlPosters}${item.poster_path}`,
+              },
+            ],
+            loading: false,
+            error: false,
+          }));
         });
       })
       .catch(this.onError);
   }
 
   render() {
-    const { movieData, loading, error } = this.state;
+    const { movieData, loading, error, query, errorMessage, totalMovies } = this.state;
+    const hadData = !(loading || error);
     const loader = loading ? <Spin tip="Loading" size="large" className="loading" /> : null;
-    const alertError = error ? (
-      <Alert
-        message="Error"
-        description={this.state.errorMessage}
-        type="error"
-        showIcon="true"
-        className="alert-error"
+    const pagination = hadData ? (
+      <Pagination
+        defaultCurrent={1}
+        pageSize={20}
+        showSizeChanger={false}
+        total={totalMovies}
+        onChange={this.onPagination}
+        totalMovies={totalMovies}
       />
     ) : null;
+    const items = [
+      {
+        key: '1',
+        label: 'Search',
+        children: (
+          <div className="container">
+            <SearchBar query={query} onLabelChange={this.onLabelChange} />
+            <main className="main">
+              {loader}
+              {error ? <AlertError errorMessage={errorMessage} /> : null}
+              <MovieList movieData={movieData} loading={loading} />
+              {pagination}
+            </main>
+          </div>
+        ),
+      },
+      {
+        key: '2',
+        label: 'Rated',
+        children: <MovieList movieData={movieData} loading={loading} />,
+      },
+    ];
     return (
       <section className="movies-app">
         <Offline>You're currently offline. Please check your connection.</Offline>
         <Online>
-          {loader}
-          {alertError}
-          <MovieList movieData={movieData} loading={loading} />
+          <Tabs defaultActiveKey="1" items={items} centered="true" onChange />
         </Online>
       </section>
     );
