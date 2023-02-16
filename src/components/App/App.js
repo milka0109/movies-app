@@ -4,6 +4,7 @@ import { Online, Offline } from 'react-detect-offline';
 import { debounce } from 'lodash';
 
 import ApiService from '../../services/ApiService';
+import { GenresProvider } from '../GenresContext/GenresContext';
 import './App.css';
 import MovieList from '../MovieList';
 import SearchBar from '../SearchBar';
@@ -23,6 +24,7 @@ export default class App extends React.Component {
       sessionId: null,
       currentPage: 1,
       totalMovies: null,
+      genres: [],
     };
   }
 
@@ -37,6 +39,15 @@ export default class App extends React.Component {
         this.setState({ sessionId: object.guest_session_id });
       })
       .catch((error) => this.onError(error));
+    this.apiService
+      .getGenres()
+      .then((genres) => {
+        this.setState({
+          genres: genres.genres,
+        });
+        console.log(genres.genres);
+      })
+      .catch((e) => this.onError(e));
     const { query, currentPage } = this.state;
     this.debouncedSearch(query, currentPage);
   }
@@ -92,7 +103,7 @@ export default class App extends React.Component {
                 id: item.id,
                 title: item.original_title,
                 releaseDate: item.release_date,
-                tags: 'tags',
+                genresId: item.genre_ids,
                 description: item.overview,
                 filmRating: item.vote_average,
                 poster: `${this.urlPosters}${item.poster_path}`,
@@ -101,6 +112,7 @@ export default class App extends React.Component {
             loading: false,
             error: false,
           }));
+          console.log(item.genre_ids);
         });
       })
       .catch(this.onError);
@@ -144,10 +156,12 @@ export default class App extends React.Component {
     ];
     return (
       <section className="movies-app">
-        <Offline>You're currently offline. Please check your connection.</Offline>
-        <Online>
-          <Tabs defaultActiveKey="1" items={items} centered="true" onChange />
-        </Online>
+        <GenresProvider value={this.state.genres}>
+          <Offline>You're currently offline. Please check your connection.</Offline>
+          <Online>
+            <Tabs defaultActiveKey="1" items={items} centered="true" />
+          </Online>
+        </GenresProvider>
       </section>
     );
   }

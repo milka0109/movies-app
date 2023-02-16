@@ -29,21 +29,7 @@
 
 .movie-data__description{
 	width: 228px;
-}
-
-.movie-data__tags{
-	display: flex;
-	gap: 8px;
-	margin: 8px 0;
-}
-
-.movie-data__tag{
-	line-height: 15px;
-	padding: 2px 4px;
-	background: #FAFAFA;
-    border: 1px solid #D9D9D9;
-	border-radius: 2px;
-	color: rgba(0, 0, 0, 0.65);
+	margin-top: 8px;
 }
 
 .movie-poster__img {

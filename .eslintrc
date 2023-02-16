@@ -33,6 +33,7 @@
 	  "quotes": ["error", "single"],
 	  "semi": ["error", "always"],
 	  "react/no-unused-state": "off",
+	  "react/state-in-constructor": "off",
 	  "react/jsx-props-no-spreading": "off",
 	  "react/prefer-stateless-function": "off",
 	  "react/react-in-jsx-scope": "off",

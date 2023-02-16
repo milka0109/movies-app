@@ -1,0 +1,16 @@
+.movie-data__genres{
+	display: inline-block;
+    box-sizing: border-box;
+    height: 20px;
+    margin-top: 10px;
+    margin-right: 5px;
+}
+
+.movie-data__genre{
+	line-height: 15px;
+	padding: 2px 4px;
+	background: #FAFAFA;
+    border: 1px solid #D9D9D9;
+	border-radius: 2px;
+	color: rgba(0, 0, 0, 0.65);
+}

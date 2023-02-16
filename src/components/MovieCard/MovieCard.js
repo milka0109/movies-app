@@ -4,6 +4,8 @@ import format from 'date-fns/format';
 
 import './MovieCard.css';
 import shortenDescription from '../../services/shortenDescription';
+import { GenresConsumer } from '../GenresContext/GenresContext';
+import Genres from '../Genres/Genres';
 
 export default class MovieCard extends React.Component {
   render() {
@@ -21,10 +23,7 @@ export default class MovieCard extends React.Component {
           <span className="movie-data__realese-date">
             {itemProps.releaseDate ? format(new Date(Date.parse(itemProps.releaseDate)), 'MMMM d, y') : null}
           </span>
-          <ul className="movie-data__tags">
-            <li className="movie-data__tag">Action</li>
-            <li className="movie-data__tag">Drama</li>
-          </ul>
+          <GenresConsumer>{(genres) => <Genres genresId={itemProps.genresId} genres={genres} />}</GenresConsumer>
           <p className="movie-data__description">{shortenDescription(itemProps.description)}</p>
         </div>
       </div>
